@@ -1,0 +1,139 @@
+#!/bin/bash
+    ORG_ORIGEN='ivan@cloudblue.us.global.prod.halfcopy'
+    ORG_DESTINO='ivan@cloudblue.us.global.prod.halfcopy'
+    XML_COMPONENTES='packageRunTestProd.xml'
+    YAML_COMPONENTES='packageRunTestProd.yaml'
+while :
+do
+    #Menu
+    clear
+    echo -e "\e[1;32m"
+    echo " SCRIPT SFDX CLI"
+    echo ""
+    echo "1. Retrieve XML"
+    echo "2. Deploy XML"
+    echo "────────────────────────"
+    echo "3. Run Test Deploy XML"
+    echo "────────────────────────"
+    echo "4. Retrieve YAML"
+    echo "5. Deploy YAML"
+    echo "────────────────────────"
+    echo "6. Run Test Deploy YAML"
+    echo "────────────────────────"
+    echo "7. Export list metadata CORE"
+    echo "8. Export list metadata VLOCITY"
+    echo "────────────────────────"
+    echo "20. Salir"
+    echo ""
+    #Escoger menu
+    echo -n "Escoger opción: "
+    read opcion
+    #Seleccion de menu
+case $opcion in
+1) 
+    echo "Inicia proceso retrieve XML"
+    # Execute Salesforce CLI command
+    echo "Retrieve to Salesforce..."
+    sfdx force:config:set defaultusername=${ORG_ORIGEN}
+    cd ..
+    sf project retrieve start --manifest manifest/${XML_COMPONENTES} --ignore-conflicts
+    cd scripts/
+    echo "Enter para volver al menú"
+    
+read foo
+;;
+2) 
+    echo "Inicia proceso deploy XML"
+    # Execute Salesforce CLI command
+    echo "Deploy to Salesforce..."
+    sfdx force:config:set defaultusername=${ORG_DESTINO} 
+    cd ..
+    sf project deploy start --manifest manifest/${XML_COMPONENTES}
+    sfdx force:config:set defaultusername=${ORG_ORIGEN}
+    cd scripts/
+    echo "Enter para volver al menú"
+read foo
+;;
+3) 
+    echo "Inicia Run Test deploy XML"
+    # Execute Salesforce CLI command
+    echo "Run Test Deploy to Salesforce..."
+    sfdx force:config:set defaultusername=${ORG_DESTINO} 
+    cd ..
+    sfdx force:source:deploy --checkonly -x manifest/${XML_COMPONENTES} -u ${ORG_DESTINO}
+    sfdx force:config:set defaultusername=${ORG_ORIGEN}
+    cd scripts/
+    echo "Enter para volver al menú"
+read foo
+;;
+4) 
+    echo "Inicia proceso retrieve YAML"
+    # Execute Salesforce CLI command
+    echo "Retrieve to Salesforce..."
+    sfdx force:config:set defaultusername=${ORG_ORIGEN}
+    cd ..
+    vlocity -sfdx.username ${ORG_ORIGEN} -job manifest/${YAML_COMPONENTES} packExport
+    cd scripts/
+    echo "Enter para volver al menú"
+read foo
+;;
+
+5) 
+    echo "Inicia proceso deploy YAML"
+    # Execute Salesforce CLI command
+    echo "Deploy to Salesforce..."
+    sfdx force:config:set defaultusername=${ORG_DESTINO} 
+    cd ..
+    vlocity -sfdx.username ${ORG_DESTINO} -job manifest/${YAML_COMPONENTES} packDeploy
+    sfdx force:config:set defaultusername=${ORG_ORIGEN}
+    cd scripts/
+    echo "Enter para volver al menú"
+read foo
+;;
+
+
+6) 
+    echo "Inicia Run Test deploy YAML"
+    echo "Deploy to Salesforce..."
+    echo "Run Test Deploy to Salesforce VLOCITY..."
+    sfdx force:config:set defaultusername=${ORG_DESTINO} 
+    cd ..
+    vlocity -sfdx.username ${ORG_DESTINO} -job manifest/${YAML_COMPONENTES} checkStaleObjects
+    sfdx force:config:set defaultusername=${ORG_ORIGEN}
+    cd scripts/
+    echo "Enter para volver al menú"
+read foo
+;;
+7) 
+    echo "Inicia proceso exportar lista componentes CORE"
+    # Execute Salesforce CLI command
+    echo "En la carpeta manifest encontrara el archivo allMetadata.xml con todos los componentes..."
+    sfdx force:config:set defaultusername=${ORG_DESTINO} 
+    cd ..
+    sfdx force source manifest create --fromorg ${ORG_DESTINO} --manifestname=allMetadata --outputdir manifest
+    sfdx force:config:set defaultusername=${ORG_ORIGEN}
+    cd scripts/
+    echo "Enter para volver al menú"
+read foo
+;;
+8) 
+    echo "Inicia proceso exportar lista componentes VLOCITY"
+    # Execute Salesforce CLI command
+    echo "En la raiz encontrara el archivo output.txt con todos los componentes..."
+    sfdx force:config:set defaultusername=${ORG_DESTINO} 
+    cd ..
+    vlocity -sfdx.username ${ORG_DESTINO} packGetAllAvailableExports --nojob> output.txt
+    sfdx force:config:set defaultusername=${ORG_ORIGEN}
+    cd scripts/
+    echo "Enter para volver al menú"
+read foo
+;;
+20)
+exit 0
+cd scripts/
+;;
+#Alerta
+*)echo "Opción inválida..."
+sleep 1
+esac
+done
