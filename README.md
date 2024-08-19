@@ -62,7 +62,7 @@ Este es el listado de archivos que deberían haberse creado después de ejecutar
 
     ![image](https://github.com/CBJuanCarlos/CICD_STRATEGY/assets/142612672/411f0161-f051-475f-b44a-b3a1c4bb4995)
 
-7. En el Quick Find, escriba "Auth Providers" y selecciónelo.
+7. En el Quick Find, escriba "Auth. Provider" y se debe crear.
 
     ![image](https://github.com/CBJuanCarlos/CICD_STRATEGY/assets/142612672/7e75e14e-70d2-4f15-b1cb-69ded7832c65)
 
