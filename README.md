@@ -28,6 +28,7 @@ Este comando va a solicitar los siguientes datos:
 - Common Name: UAT
 - Email Address: juan.obando@nespon.com
 - Password: *** (Se recomienda ingresar la misma de la ORG)
+- Company Name: GLOBAL
 
 ```
 openssl x509 -req -sha256 -days 365 -in $ALIAS_ORG.csr -signkey $ALIAS_ORG.key -out $ALIAS_ORG.crt
